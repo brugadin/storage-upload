@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Upload</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E60012;
+      --red-hover: #cc0010;
+      --red-light: #fef2f2;
+      --text: #1f2937;
+      --text-secondary: #6b7280;
+      --bg: #f9fafb;
+      --bg-card: #ffffff;
+      --border: #e5e7eb;
+      --success: #16a34a;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, #f3f4f6 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    .header {
+      background: var(--red);
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-md);
+    }
+    .header-logo {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .header-logo svg { width: 24px; height: 24px; }
+    .header h1 { font-size: 18px; font-weight: 700; }
+
+    /* Main container */
+    .container {
+      max-width: 720px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    /* API Key bar */
+    .api-key-bar {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .api-key-bar label {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--text-secondary);
+    }
+    .api-key-bar input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+    .api-key-bar input:focus { border-color: var(--red); }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--red);
+      background: var(--red-light);
+    }
+    .drop-zone svg {
+      width: 48px; height: 48px;
+      margin: 0 auto 12px;
+      color: var(--text-secondary);
+    }
+    .drop-zone.drag-over svg { color: var(--red); }
+    .drop-zone p { color: var(--text-secondary); font-size: 14px; }
+    .drop-zone .browse {
+      color: var(--red);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Progress */
+    .progress-area { margin-top: 16px; display: none; }
+    .progress-area.active { display: block; }
+    .progress-file-name {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+    .progress-bar-track {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--red);
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .progress-bar-fill.done { background: var(--success); }
+    .progress-status {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* File list */
+    .file-list { list-style: none; }
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .file-item:last-child { border-bottom: none; }
+    .file-info { flex: 1; min-width: 0; }
+    .file-name {
+      font-size: 14px;
+      font-weight: 500;
+      word-break: break-all;
+    }
+    .file-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .btn-download {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 44px;
+      min-width: 44px;
+      transition: background 0.15s;
+    }
+    .btn-download:hover { background: var(--red-hover); }
+    .btn-refresh {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary);
+      min-height: 44px;
+      transition: all 0.15s;
+    }
+    .btn-refresh:hover { border-color: var(--red); color: var(--red); }
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: var(--radius-lg);
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 100;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); }
+    .toast.success { background: var(--success); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 8.57-1.15A3.14 3.14 0 0 1 18 5.88a4 4 0 0 1 .87 7.99"/>
+        <path d="M12 13v8"/><path d="m8 17 4-4 4 4"/>
+      </svg>
+    </div>
+    <h1>File Upload</h1>
+  </header>
+
+  <div class="container">
+    <!-- API Key -->
+    <div class="api-key-bar">
+      <label for="apiKeyInput">API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="Enter your API key" autocomplete="off" />
+    </div>
+
+    <!-- Upload Card -->
+    <div class="card">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload File
+      </h2>
+      <div class="drop-zone" id="dropZone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 8.57-1.15A3.14 3.14 0 0 1 18 5.88a4 4 0 0 1 .87 7.99"/>
+          <path d="M12 13v8"/><path d="m8 17 4-4 4 4"/>
+        </svg>
+        <p>Drag & drop your file here, or <span class="browse">browse</span></p>
+        <p style="margin-top:4px;font-size:12px;">Up to 1.5 GB</p>
+        <input type="file" id="fileInput" />
+      </div>
+      <div class="progress-area" id="progressArea">
+        <div class="progress-file-name" id="progressFileName"></div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <div class="progress-status" id="progressStatus">Preparing…</div>
+      </div>
+    </div>
+
+    <!-- Files Card -->
+    <div class="card">
+      <h2 style="justify-content:space-between;">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Files
+        </span>
+        <button class="btn-refresh" onclick="loadFiles()">Refresh</button>
+      </h2>
+      <ul class="file-list" id="fileList">
+        <li class="empty-state">Loading…</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // --- State ---
+    const $ = (s) => document.querySelector(s);
+    let uploading = false;
+
+    // --- API Key ---
+    const apiKeyInput = $("#apiKeyInput");
+    apiKeyInput.value = localStorage.getItem("upload_api_key") || "";
+    apiKeyInput.addEventListener("input", () => {
+      localStorage.setItem("upload_api_key", apiKeyInput.value);
+    });
+    function getApiKey() { return apiKeyInput.value.trim(); }
+
+    // --- Toast ---
+    let toastTimeout;
+    function showToast(msg, type = "") {
+      const t = $("#toast");
+      t.textContent = msg;
+      t.className = "toast show " + type;
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => t.className = "toast", 3500);
+    }
+
+    // --- Drag & Drop ---
+    const dropZone = $("#dropZone");
+    const fileInput = $("#fileInput");
+
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("drag-over");
+    });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+      if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+    });
+
+    // --- Upload ---
+    async function handleFile(file) {
+      if (uploading) return showToast("Upload already in progress", "error");
+      if (!getApiKey()) return showToast("Please enter your API key first", "error");
+      if (file.size > 1.5 * 1024 * 1024 * 1024) return showToast("File exceeds 1.5 GB limit", "error");
+
+      uploading = true;
+      const progressArea = $("#progressArea");
+      const progressFill = $("#progressBarFill");
+      const progressStatus = $("#progressStatus");
+      const progressName = $("#progressFileName");
+
+      progressArea.classList.add("active");
+      progressName.textContent = file.name;
+      progressFill.style.width = "0%";
+      progressFill.classList.remove("done");
+      progressStatus.textContent = "Requesting upload URL…";
+
+      try {
+        // 1. Get SAS URL from API
+        const res = await fetch("/api/getUploadUrl", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-api-key": getApiKey() },
+          body: JSON.stringify({ filename: file.name }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const { uploadUrl, blobName } = await res.json();
+
+        // 2. Upload directly to blob storage
+        progressStatus.textContent = "Uploading…";
+        const contentType = file.type || "application/octet-stream";
+        const BLOCK_SIZE = 4 * 1024 * 1024; // 4 MB
+
+        if (file.size <= BLOCK_SIZE) {
+          // Small file: single PUT
+          await uploadWithProgress(uploadUrl, file, contentType, (loaded) => {
+            const pct = Math.round((loaded / file.size) * 100);
+            progressFill.style.width = pct + "%";
+            progressStatus.textContent = `Uploading… ${pct}% (${formatBytes(loaded)} / ${formatBytes(file.size)})`;
+          });
+        } else {
+          // Large file: Block Blob chunked upload
+          await uploadChunked(uploadUrl, file, contentType, BLOCK_SIZE, (loaded) => {
+            const pct = Math.round((loaded / file.size) * 100);
+            progressFill.style.width = pct + "%";
+            progressStatus.textContent = `Uploading… ${pct}% (${formatBytes(loaded)} / ${formatBytes(file.size)})`;
+          });
+        }
+
+        progressFill.style.width = "100%";
+        progressFill.classList.add("done");
+        progressStatus.textContent = "Upload complete!";
+        showToast("File uploaded successfully", "success");
+        fileInput.value = "";
+        loadFiles();
+      } catch (err) {
+        progressStatus.textContent = "Upload failed";
+        showToast(err.message || "Upload failed", "error");
+      } finally {
+        uploading = false;
+      }
+    }
+
+    // --- File List ---
+    async function loadFiles() {
+      const list = $("#fileList");
+      if (!getApiKey()) {
+        list.innerHTML = '<li class="empty-state">Enter API key to view files</li>';
+        return;
+      }
+      list.innerHTML = '<li class="empty-state">Loading…</li>';
+
+      try {
+        const res = await fetch("/api/listFiles", {
+          headers: { "x-api-key": getApiKey() },
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const files = await res.json();
+
+        if (files.length === 0) {
+          list.innerHTML = '<li class="empty-state">No files uploaded yet</li>';
+          return;
+        }
+
+        list.innerHTML = files.map((f) => `
+          <li class="file-item">
+            <div class="file-info">
+              <div class="file-name">${escapeHtml(f.name)}</div>
+              <div class="file-meta">${formatBytes(f.size)} · ${new Date(f.lastModified).toLocaleDateString()}</div>
+            </div>
+            <button class="btn-download" onclick="downloadFile('${escapeAttr(f.name)}')">Download</button>
+          </li>
+        `).join("");
+      } catch (err) {
+        list.innerHTML = `<li class="empty-state" style="color:var(--red)">Failed to load files</li>`;
+      }
+    }
+
+    async function downloadFile(name) {
+      try {
+        const res = await fetch(`/api/getDownloadUrl?name=${encodeURIComponent(name)}`, {
+          headers: { "x-api-key": getApiKey() },
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const { downloadUrl } = await res.json();
+        window.open(downloadUrl, "_blank");
+      } catch (err) {
+        showToast("Download failed: " + err.message, "error");
+      }
+    }
+
+    // --- Helpers ---
+    function uploadWithProgress(url, file, contentType, onProgress) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", url, true);
+        xhr.setRequestHeader("x-ms-blob-type", "BlockBlob");
+        xhr.setRequestHeader("Content-Type", contentType);
+        xhr.upload.addEventListener("progress", (e) => {
+          if (e.lengthComputable) onProgress(e.loaded);
+        });
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
+        });
+        xhr.addEventListener("error", () => reject(new Error("Network error during upload")));
+        xhr.addEventListener("abort", () => reject(new Error("Upload aborted")));
+        xhr.send(file);
+      });
+    }
+
+    async function uploadChunked(sasUrl, file, contentType, blockSize, onProgress) {
+      const totalBlocks = Math.ceil(file.size / blockSize);
+      const blockIds = [];
+      let uploaded = 0;
+
+      // Parse the SAS URL to append block parameters
+      const [baseUrl, sasQuery] = sasUrl.split("?");
+
+      for (let i = 0; i < totalBlocks; i++) {
+        const start = i * blockSize;
+        const end = Math.min(start + blockSize, file.size);
+        const chunk = file.slice(start, end);
+
+        // Block ID must be base64-encoded, same length for all blocks
+        const blockId = btoa(String(i).padStart(6, "0"));
+        blockIds.push(blockId);
+
+        const putBlockUrl = `${baseUrl}?comp=block&blockid=${encodeURIComponent(blockId)}&${sasQuery}`;
+        const res = await fetch(putBlockUrl, {
+          method: "PUT",
+          headers: { "Content-Length": String(end - start) },
+          body: chunk,
+        });
+        if (!res.ok) throw new Error(`Block ${i + 1}/${totalBlocks} upload failed: ${res.status}`);
+
+        uploaded += (end - start);
+        onProgress(uploaded);
+      }
+
+      // Commit the block list
+      const blockListXml = `<?xml version="1.0" encoding="utf-8"?><BlockList>${blockIds.map((id) => `<Latest>${id}</Latest>`).join("")}</BlockList>`;
+      const commitUrl = `${baseUrl}?comp=blocklist&${sasQuery}`;
+      const commitRes = await fetch(commitUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/xml",
+          "x-ms-blob-content-type": contentType,
+        },
+        body: blockListXml,
+      });
+      if (!commitRes.ok) throw new Error(`Block list commit failed: ${commitRes.status}`);
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return "0 B";
+      const k = 1024;
+      const sizes = ["B", "KB", "MB", "GB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+    }
+    function escapeHtml(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+    function escapeAttr(s) {
+      return s.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+    }
+
+    // --- Init ---
+    loadFiles();
+  </script>
+</body>
+</html>

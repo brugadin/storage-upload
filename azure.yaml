@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: storage-upload
+metadata:
+  template: storage-upload
+services:
+  web:
+    project: .
+    dist: src
+    language: js
+    host: staticwebapp
