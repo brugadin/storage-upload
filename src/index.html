@@ -47,7 +47,7 @@
     .header-logo {
       width: 40px; height: 40px;
       background: rgba(255,255,255,0.2);
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
     }
     .header-logo svg { width: 24px; height: 24px; }
@@ -163,11 +163,64 @@
       width: 0%;
       transition: width 0.3s;
     }
-    .progress-bar-fill.done { background: var(--success); }
+    .progress-bar-fill.done { background: var(--red-hover); }
     .progress-status {
       font-size: 12px;
       color: var(--text-secondary);
       margin-top: 4px;
+    }
+    .upload-results {
+      list-style: none;
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+    .upload-result-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .upload-result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .upload-result-name {
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-all;
+      flex: 1;
+    }
+    .upload-result-state {
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .upload-result-track {
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .upload-result-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--red);
+      transition: width 0.2s;
+    }
+    .upload-result-item.failed .upload-result-fill { background: var(--red-hover); }
+    .upload-result-item.done .upload-result-fill { background: var(--red-hover); }
+    .upload-result-error {
+      font-size: 11px;
+      color: var(--red);
+      margin-top: 4px;
+      word-break: break-word;
     }
 
     /* File list */
@@ -181,7 +234,27 @@
       gap: 12px;
     }
     .file-item:last-child { border-bottom: none; }
-    .file-info { flex: 1; min-width: 0; }
+    .file-info { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 10px; }
+    .file-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .file-icon svg { width: 18px; height: 18px; }
+    .file-icon--image { background: var(--red); color: #fff; }
+    .file-icon--pdf { background: var(--red); color: #fff; }
+    .file-icon--code { background: var(--red); color: #fff; }
+    .file-icon--archive { background: var(--red); color: #fff; }
+    .file-icon--audio { background: var(--red); color: #fff; }
+    .file-icon--video { background: var(--red); color: #fff; }
+    .file-icon--doc { background: var(--red); color: #fff; }
+    .file-icon--default { background: var(--red); color: #fff; }
+    .file-details { min-width: 0; }
     .file-name {
       font-size: 14px;
       font-weight: 500;
@@ -222,6 +295,65 @@
       transition: all 0.15s;
     }
     .btn-refresh:hover { border-color: var(--red); color: var(--red); }
+    .btn-delete {
+      background: none;
+      border: none;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      min-height: 44px;
+      min-width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-delete:hover { color: var(--red); background: var(--red-light); }
+    .file-actions { display: flex; align-items: center; gap: 4px; }
+    .delete-confirm {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: fadeIn 0.15s ease;
+    }
+    .delete-confirm-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .btn-delete-yes {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-delete-yes:hover { background: var(--red-hover); }
+    .btn-delete-cancel {
+      background: none;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, background 0.15s;
+    }
+    .btn-delete-cancel:hover { color: var(--text); background: var(--border); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: translateX(0); } }
     .empty-state {
       text-align: center;
       padding: 24px;
@@ -250,6 +382,261 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.error { background: var(--red); }
     .toast.success { background: var(--success); }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 4px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { color: var(--text); background: var(--bg); }
+    .tab-btn.active {
+      background: var(--red);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Scratchpad */
+    .scratchpad-pane {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .scratchpad-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .scratchpad-body {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+      min-height: 400px;
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .scratchpad-body:focus { border-color: var(--red); }
+    .scratchpad-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      position: sticky;
+      bottom: 0;
+      background: var(--bg-card);
+      padding: 8px 0 0;
+    }
+    .scratchpad-status {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .scratchpad-status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot--saving { background: #f59e0b; }
+    .dot--saved { background: var(--success); }
+    .dot--offline { background: var(--text-secondary); }
+    .dot--conflict { background: var(--red); }
+    .scratchpad-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-note {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary);
+      min-height: 44px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-note:hover { border-color: var(--red); color: var(--red); }
+    .btn-note--primary {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+    }
+    .btn-note--primary:hover { background: var(--red-hover); color: #fff; }
+    .btn-note--danger:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .scratchpad-loading {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Version History Panel */
+    .version-history-panel {
+      display: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      max-height: 280px;
+      overflow: hidden;
+      flex-direction: column;
+    }
+    .version-history-panel.open { display: flex; }
+    .version-search {
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .version-search:focus { border-bottom-color: var(--red); }
+    .version-search::placeholder { color: var(--text-secondary); }
+    .version-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 4px 0;
+    }
+    .version-list-empty {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .version-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.1s;
+      border-bottom: 1px solid var(--border);
+    }
+    .version-item:last-child { border-bottom: none; }
+    .version-item:hover { background: var(--red-light); }
+    .version-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .version-badge {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--red);
+    }
+    .version-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .version-preview {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    /* Conflict modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 24px;
+    }
+    .modal h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+    .modal-preview {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      max-height: 120px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .modal-preview-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
   </style>
 </head>
 <body>
@@ -260,7 +647,7 @@
         <path d="M12 13v8"/><path d="m8 17 4-4 4 4"/>
       </svg>
     </div>
-    <h1>File Upload</h1>
+    <h1>Storage App</h1>
   </header>
 
   <div class="container">
@@ -270,20 +657,37 @@
       <input type="password" id="apiKeyInput" placeholder="Enter your API key" autocomplete="off" />
     </div>
 
-    <!-- Upload Card -->
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="upload" onclick="switchTab('upload')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload
+      </button>
+      <button class="tab-btn" data-tab="files" onclick="switchTab('files')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Files
+      </button>
+      <button class="tab-btn" data-tab="notes" onclick="switchTab('notes')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Scratchpad
+      </button>
+    </div>
+
+    <!-- Upload Tab -->
+    <div class="tab-panel active" id="tab-upload">
     <div class="card">
       <h2>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Upload File
+        Upload Files
       </h2>
       <div class="drop-zone" id="dropZone">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 8.57-1.15A3.14 3.14 0 0 1 18 5.88a4 4 0 0 1 .87 7.99"/>
           <path d="M12 13v8"/><path d="m8 17 4-4 4 4"/>
         </svg>
-        <p>Drag & drop your file here, or <span class="browse">browse</span></p>
+        <p>Drag & drop your files here, or <span class="browse">browse</span></p>
         <p style="margin-top:4px;font-size:12px;">Up to 1.5 GB</p>
-        <input type="file" id="fileInput" />
+        <input type="file" id="fileInput" multiple />
       </div>
       <div class="progress-area" id="progressArea">
         <div class="progress-file-name" id="progressFileName"></div>
@@ -291,10 +695,13 @@
           <div class="progress-bar-fill" id="progressBarFill"></div>
         </div>
         <div class="progress-status" id="progressStatus">Preparing…</div>
+        <ul class="upload-results" id="uploadResults"></ul>
       </div>
     </div>
+    </div><!-- /tab-upload -->
 
-    <!-- Files Card -->
+    <!-- Files Tab -->
+    <div class="tab-panel" id="tab-files">
     <div class="card">
       <h2 style="justify-content:space-between;">
         <span style="display:flex;align-items:center;gap:8px;">
@@ -307,6 +714,54 @@
         <li class="empty-state">Loading…</li>
       </ul>
     </div>
+    </div><!-- /tab-files -->
+
+    <!-- Notes Tab -->
+    <div class="tab-panel" id="tab-notes">
+      <div class="scratchpad-pane" id="scratchpadPane">
+        <div class="scratchpad-loading" id="scratchpadLoading">Loading scratchpad…</div>
+        <div class="scratchpad-content" id="scratchpadContent" style="display:none;">
+          <textarea class="scratchpad-body" id="scratchpadBody" placeholder="Type or paste anything…"></textarea>
+          <div class="version-history-panel" id="versionHistoryPanel">
+            <input type="text" class="version-search" id="versionSearch" placeholder="Filter versions…" oninput="scratchpad.filterVersions(this.value)">
+            <div class="version-list" id="versionList">
+              <div class="version-list-empty">No version history yet</div>
+            </div>
+          </div>
+          <div class="scratchpad-footer">
+            <div class="scratchpad-status" id="scratchpadStatus">
+              <span class="dot dot--saved"></span>
+              <span>Ready</span>
+            </div>
+            <div class="scratchpad-actions">
+              <button class="btn-note btn-note--primary" onclick="scratchpad.saveNow()">Save now</button>
+              <button class="btn-note" id="historyBtn" onclick="scratchpad.toggleHistory()">History</button>
+              <button class="btn-note btn-note--danger" onclick="scratchpad.clear()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-notes -->
+  </div>
+
+  <!-- Conflict Modal -->
+  <div class="modal-overlay" id="conflictModal">
+    <div class="modal">
+      <h3>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Conflict Detected
+      </h3>
+      <p>This scratchpad was modified on another device or session.</p>
+      <div class="modal-preview-label">Your version:</div>
+      <div class="modal-preview" id="conflictLocalPreview"></div>
+      <div class="modal-preview-label">Server version:</div>
+      <div class="modal-preview" id="conflictServerPreview"></div>
+      <div class="modal-actions">
+        <button class="btn-note btn-note--primary" onclick="scratchpad.resolveConflict('keepMine')">Keep Mine As Copy</button>
+        <button class="btn-note" onclick="scratchpad.resolveConflict('useServer')">Use Latest</button>
+        <button class="btn-note" onclick="scratchpad.resolveConflict('cancel')">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -315,6 +770,14 @@
     // --- State ---
     const $ = (s) => document.querySelector(s);
     let uploading = false;
+
+    // --- Tab Switching ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabId));
+      if (tabId === 'files') loadFiles();
+      if (tabId === 'notes') scratchpad.load();
+    }
 
     // --- API Key ---
     const apiKeyInput = $("#apiKeyInput");
@@ -346,76 +809,200 @@
     dropZone.addEventListener("drop", (e) => {
       e.preventDefault();
       dropZone.classList.remove("drag-over");
-      if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+      if (e.dataTransfer.files.length > 0) handleFiles(Array.from(e.dataTransfer.files));
     });
     fileInput.addEventListener("change", () => {
-      if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+      if (fileInput.files.length > 0) handleFiles(Array.from(fileInput.files));
     });
 
     // --- Upload ---
-    async function handleFile(file) {
+    async function handleFiles(files) {
       if (uploading) return showToast("Upload already in progress", "error");
       if (!getApiKey()) return showToast("Please enter your API key first", "error");
-      if (file.size > 1.5 * 1024 * 1024 * 1024) return showToast("File exceeds 1.5 GB limit", "error");
+      if (!files.length) return;
+
+      const maxFileSize = 1.5 * 1024 * 1024 * 1024;
+      const validFiles = files.filter((f) => f.size <= maxFileSize);
+      const oversizedCount = files.length - validFiles.length;
+
+      if (oversizedCount > 0) {
+        showToast(`${oversizedCount} file${oversizedCount === 1 ? "" : "s"} exceed 1.5 GB limit`, "error");
+      }
+      if (validFiles.length === 0) return;
 
       uploading = true;
       const progressArea = $("#progressArea");
       const progressFill = $("#progressBarFill");
       const progressStatus = $("#progressStatus");
       const progressName = $("#progressFileName");
+      const uploadResults = $("#uploadResults");
 
       progressArea.classList.add("active");
-      progressName.textContent = file.name;
+      progressName.textContent = "Batch progress";
       progressFill.style.width = "0%";
       progressFill.classList.remove("done");
-      progressStatus.textContent = "Requesting upload URL…";
+      progressStatus.textContent = `Preparing ${validFiles.length} file${validFiles.length === 1 ? "" : "s"}…`;
+
+      const batchId = Date.now();
+      const uploadItems = validFiles.map((file, index) => ({
+        file,
+        id: `upload-${batchId}-${index}`,
+      }));
+
+      const totalBytes = uploadItems.reduce((sum, item) => sum + item.file.size, 0);
+      const loadedById = new Map(uploadItems.map((item) => [item.id, 0]));
+
+      renderUploadResults(uploadResults, uploadItems);
+
+      const updateBatchProgress = () => {
+        const loadedTotal = Array.from(loadedById.values()).reduce((sum, n) => sum + n, 0);
+        const pct = totalBytes > 0 ? Math.round((loadedTotal / totalBytes) * 100) : 0;
+        progressFill.style.width = pct + "%";
+        progressStatus.textContent = `Uploading… ${pct}% (${formatBytes(loadedTotal)} / ${formatBytes(totalBytes)})`;
+      };
 
       try {
-        // 1. Get SAS URL from API
-        const res = await fetch("/api/getUploadUrl", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-api-key": getApiKey() },
-          body: JSON.stringify({ filename: file.name }),
+        const uploadPromises = uploadItems.map(async (item) => {
+          const { id, file } = item;
+
+          updateUploadResult(id, {
+            state: "Requesting URL…",
+          });
+
+          try {
+            await uploadSingleFile(file, {
+              onRequesting: () => {
+                updateUploadResult(id, { state: "Requesting URL…" });
+              },
+              onUploading: (loaded) => {
+                loadedById.set(id, loaded);
+                const pct = Math.round((loaded / file.size) * 100);
+                updateUploadResult(id, {
+                  state: `Uploading ${pct}%`,
+                  progress: pct,
+                });
+                updateBatchProgress();
+              },
+            });
+
+            loadedById.set(id, file.size);
+            updateUploadResult(id, {
+              state: "Uploaded",
+              progress: 100,
+              done: true,
+            });
+            updateBatchProgress();
+            return { ok: true, file };
+          } catch (err) {
+            updateUploadResult(id, {
+              state: "Failed",
+              failed: true,
+              error: err.message || "Upload failed",
+            });
+            updateBatchProgress();
+            return { ok: false, file, error: err.message || "Upload failed" };
+          }
         });
-        if (!res.ok) throw new Error(await res.text());
-        const { uploadUrl, blobName } = await res.json();
 
-        // 2. Upload directly to blob storage
-        progressStatus.textContent = "Uploading…";
-        const contentType = file.type || "application/octet-stream";
-        const BLOCK_SIZE = 4 * 1024 * 1024; // 4 MB
+        const results = await Promise.all(uploadPromises);
+        const uploadedCount = results.filter((r) => r.ok).length;
+        const failed = results.filter((r) => !r.ok);
+        const failedCount = failed.length;
 
-        if (file.size <= BLOCK_SIZE) {
-          // Small file: single PUT
-          await uploadWithProgress(uploadUrl, file, contentType, (loaded) => {
-            const pct = Math.round((loaded / file.size) * 100);
-            progressFill.style.width = pct + "%";
-            progressStatus.textContent = `Uploading… ${pct}% (${formatBytes(loaded)} / ${formatBytes(file.size)})`;
-          });
-        } else {
-          // Large file: Block Blob chunked upload
-          await uploadChunked(uploadUrl, file, contentType, BLOCK_SIZE, (loaded) => {
-            const pct = Math.round((loaded / file.size) * 100);
-            progressFill.style.width = pct + "%";
-            progressStatus.textContent = `Uploading… ${pct}% (${formatBytes(loaded)} / ${formatBytes(file.size)})`;
-          });
+        if (uploadedCount > 0) {
+          loadFiles();
         }
 
-        progressFill.style.width = "100%";
         progressFill.classList.add("done");
-        progressStatus.textContent = "Upload complete!";
-        showToast("File uploaded successfully", "success");
+
+        if (failedCount === 0) {
+          showToast(`Uploaded ${uploadedCount} file${uploadedCount === 1 ? "" : "s"} successfully`, "success");
+          progressStatus.textContent = `Complete: ${uploadedCount}/${uploadItems.length} uploaded`;
+        } else {
+          showToast(`Uploaded ${uploadedCount}/${validFiles.length} file${validFiles.length === 1 ? "" : "s"}; ${failedCount} failed`, "error");
+          progressStatus.textContent = `Completed with failures: ${uploadedCount}/${uploadItems.length} uploaded`;
+        }
+
         fileInput.value = "";
-        loadFiles();
-      } catch (err) {
-        progressStatus.textContent = "Upload failed";
-        showToast(err.message || "Upload failed", "error");
       } finally {
         uploading = false;
       }
     }
 
+    function renderUploadResults(container, items) {
+      container.innerHTML = items.map((item) => `
+        <li class="upload-result-item" id="${item.id}">
+          <div class="upload-result-head">
+            <span class="upload-result-name">${escapeHtml(item.file.name)}</span>
+            <span class="upload-result-state">Queued</span>
+          </div>
+          <div class="upload-result-track"><div class="upload-result-fill" style="width:0%"></div></div>
+          <div class="upload-result-error" style="display:none"></div>
+        </li>
+      `).join("");
+    }
+
+    function updateUploadResult(id, patch) {
+      const item = document.getElementById(id);
+      if (!item) return;
+
+      const stateEl = item.querySelector(".upload-result-state");
+      const fillEl = item.querySelector(".upload-result-fill");
+      const errorEl = item.querySelector(".upload-result-error");
+
+      if (patch.state) stateEl.textContent = patch.state;
+      if (typeof patch.progress === "number") fillEl.style.width = Math.max(0, Math.min(100, patch.progress)) + "%";
+
+      item.classList.toggle("done", Boolean(patch.done));
+      item.classList.toggle("failed", Boolean(patch.failed));
+
+      if (patch.error) {
+        errorEl.textContent = patch.error;
+        errorEl.style.display = "block";
+      }
+    }
+
+    async function uploadSingleFile(file, handlers = {}) {
+      // 1. Get SAS URL from API
+      handlers.onRequesting?.();
+      const res = await fetch("/api/getUploadUrl", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": getApiKey() },
+        body: JSON.stringify({ filename: file.name }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const { uploadUrl } = await res.json();
+
+      // 2. Upload directly to blob storage
+      const contentType = file.type || "application/octet-stream";
+      const BLOCK_SIZE = 4 * 1024 * 1024; // 4 MB
+
+      if (file.size <= BLOCK_SIZE) {
+        // Small file: single PUT
+        await uploadWithProgress(uploadUrl, file, contentType, (loaded) => {
+          handlers.onUploading?.(loaded);
+        });
+      } else {
+        // Large file: Block Blob chunked upload
+        await uploadChunked(uploadUrl, file, contentType, BLOCK_SIZE, (loaded) => {
+          handlers.onUploading?.(loaded);
+        });
+      }
+    }
+
     // --- File List ---
+    function timeRemaining(lastModified) {
+      const expiresAt = new Date(lastModified).getTime() + 7 * 24 * 60 * 60 * 1000;
+      const msLeft = expiresAt - Date.now();
+      if (msLeft <= 0) return "Expiring soon";
+      const days = Math.floor(msLeft / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((msLeft % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      if (days > 1) return `Expires in ${days} days`;
+      if (days === 1) return `Expires in 1 day`;
+      if (hours > 0) return `Expires in ${hours}h`;
+      return "Expires in <1h";
+    }
+
     async function loadFiles() {
       const list = $("#fileList");
       if (!getApiKey()) {
@@ -437,12 +1024,20 @@
         }
 
         list.innerHTML = files.map((f) => `
-          <li class="file-item">
+          <li class="file-item" data-name="${escapeAttr(f.name)}">
             <div class="file-info">
-              <div class="file-name">${escapeHtml(f.name)}</div>
-              <div class="file-meta">${formatBytes(f.size)} · ${new Date(f.lastModified).toLocaleDateString()}</div>
+              ${getFileIcon(f.name)}
+              <div class="file-details">
+                <div class="file-name">${escapeHtml(f.name)}</div>
+                <div class="file-meta">${formatBytes(f.size)} · ${timeRemaining(f.lastModified)}</div>
+              </div>
             </div>
-            <button class="btn-download" onclick="downloadFile('${escapeAttr(f.name)}')">Download</button>
+            <div class="file-actions">
+              <button class="btn-download" onclick="downloadFile('${escapeAttr(f.name)}')">Download</button>
+              <button class="btn-delete" title="Delete file" onclick="showDeleteConfirm(this, '${escapeAttr(f.name)}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
           </li>
         `).join("");
       } catch (err) {
@@ -461,6 +1056,63 @@
       } catch (err) {
         showToast("Download failed: " + err.message, "error");
       }
+    }
+
+    function showDeleteConfirm(btn, name) {
+      const actions = btn.closest(".file-actions");
+      actions.innerHTML = `
+        <div class="delete-confirm">
+          <span class="delete-confirm-label">Delete?</span>
+          <button class="btn-delete-yes" onclick="confirmDelete('${escapeAttr(name)}', this)">Delete</button>
+          <button class="btn-delete-cancel" title="Cancel" onclick="cancelDelete(this)">&times;</button>
+        </div>
+      `;
+    }
+
+    function cancelDelete(btn) {
+      const item = btn.closest(".file-item");
+      const name = item.dataset.name;
+      const actions = btn.closest(".file-actions");
+      actions.innerHTML = `
+        <button class="btn-download" onclick="downloadFile('${escapeAttr(name)}')">Download</button>
+        <button class="btn-delete" title="Delete file" onclick="showDeleteConfirm(this, '${escapeAttr(name)}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      `;
+    }
+
+    async function confirmDelete(name, btn) {
+      btn.disabled = true;
+      btn.textContent = "…";
+      try {
+        const res = await fetch(`/api/deleteFile?name=${encodeURIComponent(name)}`, {
+          method: "DELETE",
+          headers: { "x-api-key": getApiKey() },
+        });
+        if (!res.ok) throw new Error(await res.text());
+        showToast("File deleted", "success");
+        loadFiles();
+      } catch (err) {
+        showToast("Delete failed: " + err.message, "error");
+        cancelDelete(btn);
+      }
+    }
+
+    // --- File Icons ---
+    function getFileIcon(name) {
+      const ext = (name.split(".").pop() || "").toLowerCase();
+      const icons = {
+        image: { exts: ["png","jpg","jpeg","gif","webp","svg","bmp","ico","tiff"], cls: "image", path: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' },
+        pdf: { exts: ["pdf"], cls: "pdf", path: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/>' },
+        code: { exts: ["js","ts","jsx","tsx","html","css","json","xml","yaml","yml","py","rb","go","rs","java","c","cpp","h","sh","bat","ps1"], cls: "code", path: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>' },
+        archive: { exts: ["zip","rar","7z","tar","gz","bz2","xz"], cls: "archive", path: '<path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/>' },
+        audio: { exts: ["mp3","wav","ogg","flac","aac","m4a","wma"], cls: "audio", path: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>' },
+        video: { exts: ["mp4","avi","mkv","mov","wmv","webm","flv"], cls: "video", path: '<polygon points="5 3 19 12 5 21 5 3"/>' },
+        doc: { exts: ["doc","docx","odt","rtf","txt","md","csv","xls","xlsx","ppt","pptx"], cls: "doc", path: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>' },
+      };
+      const match = Object.values(icons).find(i => i.exts.includes(ext));
+      const { cls, path } = match || { cls: "default", path: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/>' };
+      return `<div class="file-icon file-icon--${cls}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg></div>`;
     }
 
     // --- Helpers ---
@@ -541,6 +1193,260 @@
     function escapeAttr(s) {
       return s.replace(/'/g, "\\'").replace(/"/g, "&quot;");
     }
+
+    // --- Scratchpad ---
+    const scratchpad = (() => {
+      let version = 0;
+      let autosaveTimer = null;
+      let loaded = false;
+      let conflictServerContent = null;
+      let conflictServerVersion = null;
+      let historyVersions = [];
+      let historyOpen = false;
+      const AUTOSAVE_DELAY = 2000;
+
+      function getHeaders() {
+        return { "Content-Type": "application/json", "x-api-key": getApiKey() };
+      }
+
+      function setSaveStatus(state, text) {
+        const el = $("#scratchpadStatus");
+        const dot = el.querySelector(".dot");
+        const span = el.querySelector("span:last-child");
+        dot.className = "dot dot--" + state;
+        span.textContent = text;
+      }
+
+      function showContent(show) {
+        $("#scratchpadLoading").style.display = show ? "none" : "block";
+        $("#scratchpadContent").style.display = show ? "flex" : "none";
+      }
+
+      function startAutosave() {
+        clearTimeout(autosaveTimer);
+        setSaveStatus("saving", "Unsaved changes…");
+        autosaveTimer = setTimeout(() => saveNow(), AUTOSAVE_DELAY);
+      }
+
+      async function load() {
+        if (!getApiKey()) {
+          showContent(true);
+          $("#scratchpadBody").value = "";
+          version = 0;
+          setSaveStatus("saved", "Enter an API key to sync");
+          return;
+        }
+        try {
+          showContent(false);
+          const res = await fetch("/api/getScratchpad", { headers: { "x-api-key": getApiKey() } });
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+          $("#scratchpadBody").value = data.content || "";
+          version = data.version || 0;
+          loaded = true;
+          showContent(true);
+          if (version === 0) {
+            setSaveStatus("saved", "Empty scratchpad – start typing");
+          } else {
+            const agoText = data.updatedAt ? ` · ${timeAgo(data.updatedAt)}` : '';
+            setSaveStatus("saved", `Loaded · v${version}${agoText}`);
+          }
+        } catch (err) {
+          showContent(true);
+          setSaveStatus("offline", "Load failed – offline?");
+          showToast("Failed to load scratchpad: " + err.message, "error");
+        }
+      }
+
+      async function saveNow() {
+        const content = $("#scratchpadBody").value;
+        if (!getApiKey()) return;
+
+        setSaveStatus("saving", "Saving…");
+        try {
+          const res = await fetch("/api/saveScratchpad", {
+            method: "PUT",
+            headers: getHeaders(),
+            body: JSON.stringify({ content, version }),
+          });
+
+          if (res.status === 409) {
+            const data = await res.json();
+            conflictServerContent = data.serverContent;
+            conflictServerVersion = data.serverVersion;
+            setSaveStatus("conflict", "Conflict detected");
+            showConflictModal(content);
+            return;
+          }
+
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+          version = data.version;
+          setSaveStatus("saved", `Saved · v${version} · just now`);
+        } catch (err) {
+          setSaveStatus("offline", "Save failed – offline?");
+          showToast("Save failed: " + err.message, "error");
+        }
+      }
+
+      function clear() {
+        if (!confirm("Clear the scratchpad? This will erase all text.")) return;
+        $("#scratchpadBody").value = "";
+        startAutosave();
+      }
+
+      function showConflictModal(localContent) {
+        $("#conflictLocalPreview").textContent = localContent.substring(0, 500);
+        $("#conflictServerPreview").textContent = (conflictServerContent || "").substring(0, 500);
+        $("#conflictModal").classList.add("show");
+      }
+
+      async function resolveConflict(action) {
+        $("#conflictModal").classList.remove("show");
+        if (action === "cancel") {
+          setSaveStatus("conflict", "Conflict unresolved");
+          return;
+        }
+        if (action === "useServer") {
+          $("#scratchpadBody").value = conflictServerContent || "";
+          version = conflictServerVersion;
+          setSaveStatus("saved", `Loaded server v${version}`);
+          conflictServerContent = null;
+          conflictServerVersion = null;
+          return;
+        }
+        if (action === "keepMine") {
+          // Overwrite with local content by using the server version as base
+          version = conflictServerVersion;
+          conflictServerContent = null;
+          conflictServerVersion = null;
+          await saveNow();
+        }
+      }
+
+      // Setup autosave listeners
+      document.addEventListener("DOMContentLoaded", () => {
+        const bodyInput = document.getElementById("scratchpadBody");
+        if (bodyInput) bodyInput.addEventListener("input", startAutosave);
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", (e) => {
+        // Ctrl/Cmd+S — save now (only when scratchpad tab is active)
+        if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+          const notesTab = document.getElementById("tab-notes");
+          if (notesTab && notesTab.classList.contains("active")) {
+            e.preventDefault();
+            saveNow();
+          }
+        }
+        // Escape — close history panel or conflict modal
+        if (e.key === "Escape") {
+          if (historyOpen) {
+            historyOpen = false;
+            $("#versionHistoryPanel").classList.remove("open");
+          }
+          if ($("#conflictModal").classList.contains("show")) {
+            $("#conflictModal").classList.remove("show");
+            setSaveStatus("conflict", "Conflict unresolved");
+          }
+        }
+        // Ctrl/Cmd+H — toggle history (only when scratchpad tab is active)
+        if ((e.ctrlKey || e.metaKey) && e.key === "h") {
+          const notesTab = document.getElementById("tab-notes");
+          if (notesTab && notesTab.classList.contains("active")) {
+            e.preventDefault();
+            toggleHistory();
+          }
+        }
+      });
+
+      function timeAgo(dateStr) {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        if (diffMins < 1) return 'just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+        return date.toLocaleDateString();
+      }
+
+      function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      function toggleHistory() {
+        historyOpen = !historyOpen;
+        const panel = $("#versionHistoryPanel");
+        if (historyOpen) {
+          panel.classList.add("open");
+          $("#versionSearch").value = "";
+          loadVersions();
+        } else {
+          panel.classList.remove("open");
+        }
+      }
+
+      async function loadVersions() {
+        const list = $("#versionList");
+        list.innerHTML = '<div class="version-list-empty">Loading…</div>';
+        try {
+          const res = await fetch("/api/listScratchpadVersions", { headers: { "x-api-key": getApiKey() } });
+          if (!res.ok) throw new Error(await res.text());
+          historyVersions = await res.json();
+          renderVersions(historyVersions);
+        } catch (err) {
+          list.innerHTML = '<div class="version-list-empty">Failed to load history</div>';
+        }
+      }
+
+      function renderVersions(versions) {
+        const list = $("#versionList");
+        if (!versions.length) {
+          list.innerHTML = '<div class="version-list-empty">No version history yet</div>';
+          return;
+        }
+        list.innerHTML = versions.map(v => `
+          <div class="version-item" onclick="scratchpad.restoreVersion(${v.version})">
+            <div class="version-item-header">
+              <span class="version-badge">v${v.version}</span>
+              <span class="version-time">${escapeHtml(timeAgo(v.savedAt))}</span>
+            </div>
+            <div class="version-preview">${escapeHtml(v.preview) || '<em style="opacity:0.5">(empty)</em>'}</div>
+          </div>
+        `).join('');
+      }
+
+      function filterVersions(query) {
+        const q = query.toLowerCase();
+        const filtered = historyVersions.filter(v =>
+          v.preview.toLowerCase().includes(q) ||
+          ('v' + v.version).includes(q)
+        );
+        renderVersions(filtered);
+      }
+
+      async function restoreVersion(ver) {
+        if (!confirm(`Restore version ${ver}? Your current content will be saved first.`)) return;
+        try {
+          const res = await fetch(`/api/getScratchpadVersion?version=${ver}`, { headers: { "x-api-key": getApiKey() } });
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+          $("#scratchpadBody").value = data.content || "";
+          historyOpen = false;
+          $("#versionHistoryPanel").classList.remove("open");
+          await saveNow();
+        } catch (err) {
+          showToast("Failed to restore version: " + err.message, "error");
+        }
+      }
+
+      return { load, saveNow, clear, resolveConflict, toggleHistory, filterVersions, restoreVersion };
+    })();
 
     // --- Init ---
     loadFiles();

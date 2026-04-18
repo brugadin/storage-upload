@@ -11,6 +11,7 @@ const {
 } = require("@azure/storage-blob");
 
 const CONTAINER_NAME = "uploads";
+const NOTES_CONTAINER_NAME = "notes";
 
 function validateApiKey(req) {
   const expected = process.env.API_KEY;
@@ -39,4 +40,4 @@ function getStorageClients() {
   return { blobServiceClient, sharedKeyCredential, accountName: parsed["AccountName"] };
 }
 
-module.exports = { validateApiKey, getStorageClients, CONTAINER_NAME };
+module.exports = { validateApiKey, getStorageClients, CONTAINER_NAME, NOTES_CONTAINER_NAME };
